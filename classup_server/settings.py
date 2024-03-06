@@ -121,6 +121,25 @@ GRAPHENE = {
     ],
 }
 
+import os
+import secrets
+
+# Generate a random JWT secret key
+jwt_secret_key = secrets.token_hex(64)
+
+# Set the JWT secret key as an environment variable
+os.environ["JWT_SECRET_KEY"] = jwt_secret_key
+
+print("JWT secret key generated and set as environment variable:", jwt_secret_key)
+
+# JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
+JWT_SECRET_KEY = secrets.token_hex(64)
+print(JWT_SECRET_KEY)
+
+# If the JWT secret key is not set, raise an error or provide a default value
+if JWT_SECRET_KEY is None:
+    raise Exception("JWT secret key is not set. Please set the JWT_SECRET_KEY environment variable.")
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
