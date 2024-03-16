@@ -1,3 +1,5 @@
+import os
+
 import graphene
 import graphql_jwt
 import jwt
@@ -46,7 +48,14 @@ class TokenAuthWithUser(graphene.Mutation):
             'user_id': str(user.id),
             'exp': datetime.utcnow() + timedelta(days=1)  # Token expiration time
         }
-        token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm='HS256')
+        
+        jwt_secret_key = os.environ.get("JWT_SECRET_KEY")
+        if jwt_secret_key is None:
+            raise Exception("JWT secret key is not set. Please set the JWT_SECRET_KEY environment variable.")
+
+        # Generate JWT token
+        token = jwt.encode(payload, jwt_secret_key, algorithm='HS256')
+        
 
         return TokenAuthWithUser(token=token, user=user)
 
@@ -54,6 +63,8 @@ class Mutation(graphene.ObjectType):
     token_auth_with_user = TokenAuthWithUser.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
+
+    login = TokenAuthWithUser.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
 
