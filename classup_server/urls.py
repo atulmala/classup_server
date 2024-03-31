@@ -18,11 +18,11 @@ from django.contrib import admin
 from django.urls import path
 from graphene_django.views import GraphQLView
 
-from .schema import graphql_view
+from .schema import graphql_view, introspect_schema
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path("graphql", GraphQLView.as_view(graphiql=True)),
-    path('graphql', graphql_view,),
+    path('graphql', graphql_view, name='graphql_view'),
+    path('introspect', introspect_schema, name='introspect'),
 ]

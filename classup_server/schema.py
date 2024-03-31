@@ -1,4 +1,5 @@
 import os
+from django.http import JsonResponse
 
 import graphene
 import graphql_jwt
@@ -6,13 +7,11 @@ import jwt
 
 from graphene_django.views import GraphQLView
 from datetime import datetime, timedelta
-from pytz import utc
 
 from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from django.conf import settings
 
 class Query(graphene.ObjectType):
     hello = graphene.String(default_value="Hi!")
@@ -55,16 +54,14 @@ class TokenAuthWithUser(graphene.Mutation):
 
         # Generate JWT token
         token = jwt.encode(payload, jwt_secret_key, algorithm='HS256')
+        print('login succcessful and token generated: %s' % token)
         
-
         return TokenAuthWithUser(token=token, user=user)
 
 class Mutation(graphene.ObjectType):
     token_auth_with_user = TokenAuthWithUser.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
-
-    login = TokenAuthWithUser.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
 
@@ -73,3 +70,8 @@ schema = graphene.Schema(query=Query, mutation=Mutation)
 def graphql_view(request):
     view = GraphQLView.as_view(schema=schema, graphiql=True)
     return view(request)
+
+@csrf_exempt
+def introspect_schema(request):
+    introspection = schema.introspect()
+    return JsonResponse(introspection)

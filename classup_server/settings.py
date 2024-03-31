@@ -30,11 +30,6 @@ SECRET_KEY = 'django-insecure-+&t9vx!rvdi&wbm05tz-+ih$24-)cync04!yp@f3s_0*hsq018
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    '18.224.139.179',
-    'dev1.classupclient.com',
-]
-
 
 # Application definition
 
@@ -46,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'graphene_django',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -57,7 +53,21 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+ALLOWED_HOSTS = [
+    '18.224.139.179',
+    'dev1.classupclient.com',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://18.224.139.179",  
+    "https://dev1.classupclient.com",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
 
 ROOT_URLCONF = 'classup_server.urls'
 
