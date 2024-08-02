@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
-import secrets
 from pathlib import Path
 
 from django.urls import path
@@ -42,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'graphene_django',
     'corsheaders',
+    'base',
+    'school',
 ]
 
 MIDDLEWARE = [
@@ -89,15 +90,41 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'classup_server.wsgi.application'
 
+db_host = os.environ.get('DB_HOST')
+if db_host is None:
+    raise Exception("DB host not set")
+db_name = os.environ.get("DB_NAME")
+if db_name is None:
+    raise Exception("DB name not set")
+db_user = os.environ.get("DB_USER")
+if db_user is None:
+    raise Exception("DB user not set")
+db_password = os.environ.get("DB_PASSWORD");
+if db_password is None:
+    raise Exception("DB connection password not set")
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': db_name,
+#         'HOST': db_host,
+#         'PORT': '3306',
+#         'USER': db_user,
+#         'PASSWORD': db_password,
+#     }
+# }
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'djongo',
         'NAME': 'classup2',
-        'HOST': 'guruq-c-dev.ci4bbila6odr.us-east-2.rds.amazonaws.com',
-        'PORT': '3306',
-        'USER': 'classup',
-        'PASSWORD': 'classup#1',
+        'ENFORCE_SCHEMA': False,
+        'CLIENT': {
+            'host': 'mongodb://localhost:27017/',
+            'username': 'classup2',
+            'password': 'Classup@2015',
+            'authSource': 'classup2',
+        }
     }
 }
 

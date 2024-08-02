@@ -25,8 +25,6 @@ class UserType(graphene.ObjectType):
     is_active = graphene.Boolean()
 
     def resolve_groups(self, info):
-        # Assuming groups is a list of strings in your database
-        # return self.groups
         return [group.name for group in self.groups.all()] 
 
 class TokenAuthWithUser(graphene.Mutation):
