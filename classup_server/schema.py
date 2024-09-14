@@ -6,15 +6,17 @@ import graphql_jwt
 import jwt
 
 from graphene_django.views import GraphQLView
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
+from school.schema import Query as SchoolQuery, Mutation as SchoolMutation
 
-class Query(graphene.ObjectType):
-    hello = graphene.String(default_value="Hi!")
+
+class Query(SchoolQuery, graphene.ObjectType):
+    pass
 
 class UserType(graphene.ObjectType):
     id = graphene.ID()
@@ -28,6 +30,7 @@ class UserType(graphene.ObjectType):
         return [group.name for group in self.groups.all()] 
 
 class TokenAuthWithUser(graphene.Mutation):
+    print(f'10082024-E inside TokenAuthWithUser')
     token = graphene.String()
     user = graphene.Field(UserType)
 
@@ -40,10 +43,12 @@ class TokenAuthWithUser(graphene.Mutation):
         user = authenticate(username=username, password=password)
         if user is None:
             raise Exception('Invalid credentials')
+        else:
+            print(f'12082024-B user: {user}')
 
         payload = {
             'user_id': str(user.id),
-            'exp': datetime.utcnow() + timedelta(days=1)  # Token expiration time
+            'exp': datetime.now(timezone.utc) + timedelta(days=1)  # Token expiration time
         }
         
         jwt_secret_key = os.environ.get("JWT_SECRET_KEY")
@@ -52,7 +57,7 @@ class TokenAuthWithUser(graphene.Mutation):
 
         # Generate JWT token
         token = jwt.encode(payload, jwt_secret_key, algorithm='HS256')
-        print('login succcessful and token generated: %s' % token)
+        print('12082024-A login succcessful and token generated')
         
         return TokenAuthWithUser(token=token, user=user)
 
@@ -64,7 +69,7 @@ class Mutation(graphene.ObjectType):
 schema = graphene.Schema(query=Query, mutation=Mutation)
 
 @csrf_exempt
-@require_POST
+# @require_POST
 def graphql_view(request):
     view = GraphQLView.as_view(schema=schema, graphiql=True)
     return view(request)

@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 
 from django.urls import path
+from .views import PrintTokenMiddleware
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,8 @@ print(BASE_DIR)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-+&t9vx!rvdi&wbm05tz-+ih$24-)cync04!yp@f3s_0*hsq018'
-
+JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
+print(f'10082024-A JWT_SECRET_KEY = {JWT_SECRET_KEY}')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -53,18 +55,19 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    # 'classup_server.views.PrintTokenMiddleware'
 ]
 ALLOWED_HOSTS = [
     '18.224.139.179',
-    'dev1.classupclient.com',
+    '3.15.214.88',
+    'dev.myclassup.in',
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://18.224.139.179",  
-    "https://dev1.classupclient.com",
+    "https://dev.myclassup.in",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -151,6 +154,11 @@ AUTHENTICATION_BACKENDS = [
     'graphql_jwt.backends.JSONWebTokenBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+GRAPHQL_JWT = {
+    'JWT_ALGORITHM': 'HS256',
+    'JWT_SECRET_KEY': JWT_SECRET_KEY,
+}
 
 GRAPHENE = {
     'SCHEMA': 'classup_server.schema.schema',
