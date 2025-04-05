@@ -56,7 +56,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    # 'classup_server.views.PrintTokenMiddleware'
+    'classup_server.views.PrintTokenMiddleware'
 ]
 ALLOWED_HOSTS = [
     '18.224.139.179',
@@ -68,6 +68,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://18.224.139.179",  
     "https://dev.myclassup.in",
+    "https://www.myclassup.in",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
